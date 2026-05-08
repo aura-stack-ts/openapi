@@ -20,7 +20,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.npmjs.org/@aura-stack/openapi"
+    "registry": "https://registry.npmjs.org/"
   },
   "sideEffects": false,
   "files": [

@@ -12,7 +12,7 @@
 
 ## License
 
-Licensed under the [MIT License](../../LICENSE). © [Aura Stack](https://github.com/aura-stack-ts)
+Licensed under the [MIT License](./LICENSE). © [Aura Stack](https://github.com/aura-stack-ts)
 
 ---
 
