@@ -1,0 +1,37 @@
+{
+  "name": "@aura-stack/tsdown-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Tsdown configuration for Aura OpenAPI Auth packages.",
+  "scripts": {
+    "build": "tsdown tsdown.config.ts --format cjs,esm --dts --clean --no-fixed-extension",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "clean:cts": "rm -rf dist/*.cts"
+  },
+  "keywords": [
+    "typescript",
+    "tsconfig",
+    "configuration",
+    "aura-stack"
+  ],
+  "author": "Aura Stack <aurastackjs@gmail.com> | Hernan Alvarado <hernanvid123@gmail.com>",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/tsdown.config.d.ts",
+      "import": "./dist/tsdown.config.js",
+      "require": "./dist/tsdown.config.cjs"
+    }
+  },
+  "devDependencies": {
+    "@aura-stack/tsconfig": "workspace:*"
+  },
+  "packageManager": "pnpm@10.15.0"
+}
