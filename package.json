@@ -1,0 +1,48 @@
+{
+  "name": "@aura-stack/openapi-root",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An open-source OpenAPI specification generator for TypeScript.",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "format": "turbo run format format:root --parallel",
+    "format:root": "oxfmt \"!packages\" \"!apps\" \"!configs\"",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "type-check": "turbo run type-check --parallel"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aura-stack-ts/openapi.git"
+  },
+  "bugs": "https://github.com/aura-stack-ts/openapi/issues",
+  "homepage": "https://github.com/aura-stack-ts/openapi#readme",
+  "keywords": [
+    "openapi",
+    "swagger",
+    "api",
+    "aura",
+    "aura stack",
+    "router",
+    "typescript",
+    "nodejs"
+  ],
+  "author": "Aura Stack <aurastackjs@gmail.com> | Hernan Alvarado <halvaradop.dev@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bun": "^1.3.9",
+    "@types/node": "^24.9.2",
+    "oxfmt": "^0.41.0",
+    "oxlint": "^1.56.0",
+    "tsdown": "^0.21.8",
+    "turbo": "^2.9.10",
+    "typescript": "^5.6.3"
+  },
+  "packageManager": "pnpm@10.15.0",
+  "engines": {
+    "node": ">=22"
+  }
+}

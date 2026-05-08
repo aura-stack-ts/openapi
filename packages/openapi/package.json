@@ -1,0 +1,62 @@
+{
+  "name": "@aura-stack/openapi",
+  "version": "0.0.0",
+  "private": false,
+  "type": "module",
+  "description": "OpenAPI specification generator for @aura-stack/router",
+  "scripts": {
+    "dev": "tsdown --watch",
+    "build": "tsdown",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aura-stack-ts/openapi"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/@aura-stack/openapi"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "keywords": [
+    "openapi",
+    "swagger",
+    "api",
+    "aura",
+    "aura stack",
+    "router",
+    "typescript",
+    "nodejs"
+  ],
+  "author": "Aura Stack <aurastackjs@gmail.com> | Hernan Alvarado <hernanvid123@gmail.com>",
+  "homepage": "https://github.com/aura-stack-ts/openapi",
+  "bugs": {
+    "url": "https://github.com/aura-stack-ts/openapi/issues"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@aura-stack/tsconfig": "workspace:*",
+    "@aura-stack/tsdown-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "@aura-stack/router": "^0.6.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@10.15.0"
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "./node_modules/turbo/schema.json",
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": [".env"],
+      "outputs": [
+        "dist/**",
+      ]
+    },
+    "format": {
+      "dependsOn": ["^format"],
+      "outputLogs": "new-only"
+    },
+    "//#format:root": {
+      "outputLogs": "new-only"
+    },
+    "type-check": {
+      "dependsOn": ["^type-check"],
+      "outputLogs": "new-only",
+      "persistent": false
+    }
+  },
+  "ui": "tui",
+  "cacheDir": ".turbo/cache",
+  "globalDependencies": [".env", "tsconfig.json"],
+  "globalEnv": [".env"],
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@aura-stack/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TypeScript configuration for Aura Stack Auth packages.",
+  "scripts": {
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
+  },
+  "keywords": [
+    "typescript",
+    "tsconfig",
+    "configuration",
+    "aura-stack"
+  ],
+  "author": "Aura Stack <aurastackjs@gmail.com> | Hernan Alvarado <hernanvid123@gmail.com>",
+  "license": "MIT",
+  "packageManager": "pnpm@10.15.0"
+}
