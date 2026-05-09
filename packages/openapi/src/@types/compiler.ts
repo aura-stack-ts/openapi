@@ -11,21 +11,50 @@
  */
 export interface JSDocTagInfo {
     /**
-     * The description of the tag, which may include additional details about the parameter, return value, or other information relevant to the tag. This is optional and may not be present for all tags.
-     */
-    name?: string
-    /**
-     * The description of the tag, which may include additional details about the parameter, return value, or other information relevant to the tag. This is optional and may not be present for all tags.
-     */
-    description?: string
-    /**
      * The name of the tag (e.g., "param", "returns", "deprecated", etc.).
      */
     tag: string
     /**
-     * The type of the tag (e.g., "number", "string", "boolean", etc.). This is optional and may not be present for all tags.
+     * The raw text of the tag following the tag name.
      */
+    raw: string
+}
+
+export interface OpenApiRoute {
+    method: string
+    route: string
+}
+
+export interface OpenApiParameter {
+    name: string
+    in: "path" | "query" | "header" | "cookie"
+    required: boolean
+    description?: string
     type?: string
+}
+
+export interface OpenApiBody {
+    type?: string
+    required: boolean
+    description?: string
+}
+
+export interface OpenApiResponse {
+    statusCode: string | number
+    description?: string
+    type?: string
+}
+
+export interface OpenApiOperationMetadata {
+    isOpenApi: boolean
+    summary?: string
+    description?: string
+    tags: string[]
+    operationId?: string
+    route?: OpenApiRoute
+    parameters: OpenApiParameter[]
+    body?: OpenApiBody
+    responses: OpenApiResponse[]
 }
 
 /**
@@ -59,6 +88,11 @@ export interface FunctionMetadata {
      * Each tag includes its name, description, type, and the tag itself (e.g., "param", "returns", etc.).
      */
     tags: JSDocTagInfo[]
+
+    /**
+     * Parsed OpenAPI metadata if the function is annotated for OpenAPI generation.
+     */
+    openapi?: OpenApiOperationMetadata
 }
 
 export interface FileMetadata {

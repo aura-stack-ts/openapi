@@ -1,5 +1,7 @@
 import ts from "typescript"
-import type { FunctionMetadata, JSDocTagInfo } from "@/@types/compiler.ts"
+import { getPathsObject } from "@/syntax/paths-object.ts"
+import type { PathsObject } from "@/@types/openapi.ts"
+import type { JSDocTagInfo } from "@/@types/compiler.ts"
 
 const getCommentTextFromJSDoc = (comment?: string | ts.NodeArray<ts.JSDocComment> | ts.JSDocText): string | undefined => {
     if (!comment) return undefined
@@ -10,8 +12,30 @@ const getCommentTextFromJSDoc = (comment?: string | ts.NodeArray<ts.JSDocComment
     return (comment as ts.JSDocText).text
 }
 
-export const getJSDocMetadata = (sourceFile: ts.SourceFile): FunctionMetadata[] => {
-    const functions: FunctionMetadata[] = []
+const getTagsFromJSDoc = (tags: ts.NodeArray<ts.JSDocTag> | undefined, sourceFile: ts.SourceFile): JSDocTagInfo[] => {
+    if (!tags) return []
+    return tags.map((tag) => {
+        const tagName = tag.tagName.text
+        const fullText = tag.getText(sourceFile)
+
+        let raw = fullText.replace(new RegExp(`^@${tagName}\\s*`), "")
+
+        raw = raw
+            .split(/\r?\n/)
+            .map((line) => line.replace(/^\s*\*\s?/, "").trim())
+            .filter((line) => line.length > 0)
+            .join(" ")
+            .trim()
+
+        return {
+            tag: tagName,
+            raw,
+        }
+    })
+}
+
+export const getJSDocMetadata = (sourceFile: ts.SourceFile): PathsObject => {
+    const metadata: PathsObject = {}
 
     const visit = (node: ts.Node) => {
         let name: string | undefined
@@ -38,56 +62,28 @@ export const getJSDocMetadata = (sourceFile: ts.SourceFile): FunctionMetadata[] 
             if (docs.length > 0) {
                 const doc = docs.find(ts.isJSDoc)
                 if (doc) {
+                    const hasOpenAPITag = doc.tags?.some((tag) => tag.tagName.text === "openapi")
+                    if (!hasOpenAPITag) return
                     const description = getCommentTextFromJSDoc(doc.comment)
                     const tags: JSDocTagInfo[] = []
 
-                    if (doc.tags) {
-                        for (const tag of doc.tags) {
-                            const tagInfo: JSDocTagInfo = {
-                                tag: tag.tagName.text,
-                            }
+                    getTagsFromJSDoc(doc.tags, sourceFile).forEach((tagInfo) => tags.push(tagInfo))
 
-                            let typeExpr: ts.JSDocTypeExpression | undefined
-                            let paramName: string | undefined
-
-                            if (ts.isJSDocReturnTag(tag)) {
-                                typeExpr = tag.typeExpression
-                            } else if (ts.isJSDocParameterTag(tag)) {
-                                typeExpr = tag.typeExpression
-                                paramName = ts.isIdentifier(tag.name) ? tag.name.text : tag.name.getText(sourceFile)
-                            } else if (ts.isJSDocTypeTag(tag)) {
-                                typeExpr = tag.typeExpression
-                            } else if ("typeExpression" in tag) {
-                                typeExpr = (tag as any).typeExpression as ts.JSDocTypeExpression
-                            }
-
-                            if (typeExpr && typeExpr.type) {
-                                tagInfo.type = typeExpr.type.getText(sourceFile)
-                            }
-
-                            if (paramName) {
-                                tagInfo.name = paramName
-                            }
-
-                            const tagComment = getCommentTextFromJSDoc(tag.comment)
-                            if (tagComment) {
-                                tagInfo.description = tagComment
-                            }
-
-                            tags.push(tagInfo)
+                    const pathObject = getPathsObject(tags)
+                    if (pathObject) {
+                        const { route, operation } = pathObject
+                        if (!metadata[route.route]) {
+                            metadata[route.route] = {}
                         }
+                        metadata[route.route]["description"] = description
+                        // @ts-ignore
+                        metadata[route.route][route.method as string] = operation
                     }
-
-                    functions.push({
-                        name,
-                        description,
-                        tags,
-                    })
                 }
             }
         }
         ts.forEachChild(node, visit)
     }
     visit(sourceFile)
-    return functions
+    return metadata
 }

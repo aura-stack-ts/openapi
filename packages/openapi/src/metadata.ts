@@ -2,7 +2,7 @@ import ts from "typescript"
 import { resolve, extname, basename } from "node:path"
 import { readdir, stat, readFile } from "node:fs/promises"
 import { getJSDocMetadata } from "@/jsdoc-metadata.ts"
-import type { FileMetadata } from "@/@types/compiler.ts"
+import type { OpenAPISpec } from "@/@types/openapi.ts"
 
 export const getFiles = async (dir: string): Promise<string[]> => {
     const dirents = await readdir(dir, { withFileTypes: true })
@@ -15,7 +15,16 @@ export const getFiles = async (dir: string): Promise<string[]> => {
     return Array.prototype.concat(...files)
 }
 
-export const getMetadata = async (targetPath: string): Promise<FileMetadata[]> => {
+export const getMetadata = async (targetPath: string): Promise<OpenAPISpec> => {
+    const openAPISpec: OpenAPISpec = {
+        openapi: "3.0.0",
+        info: {
+            title: "API Documentation",
+            version: "1.0.0",
+        },
+        paths: {},
+    }
+
     const stats = await stat(targetPath)
     let filesToProcess: string[] = []
     if (stats.isDirectory()) {
@@ -29,23 +38,16 @@ export const getMetadata = async (targetPath: string): Promise<FileMetadata[]> =
         if ((ext === ".ts" || ext === ".tsx") && !targetPath.endsWith(".d.ts")) {
             filesToProcess = [resolve(targetPath)]
         } else {
-            return []
+            return openAPISpec
         }
     }
 
-    const results: FileMetadata[] = []
     for (const filePath of filesToProcess) {
         const content = await readFile(filePath, "utf-8")
         const sourceFile = ts.createSourceFile(basename(filePath), content, ts.ScriptTarget.Latest, true)
 
-        const functions = getJSDocMetadata(sourceFile)
-
-        if (functions.length > 0) {
-            results.push({
-                filePath,
-                functions,
-            })
-        }
+        const pathsObject = getJSDocMetadata(sourceFile)
+        openAPISpec.paths = { ...openAPISpec.paths, ...pathsObject }
     }
-    return results
+    return openAPISpec
 }

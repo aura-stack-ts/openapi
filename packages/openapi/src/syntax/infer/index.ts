@@ -1,0 +1,6 @@
+export { inferDescription } from "@/syntax/infer/infer-description.ts"
+export { inferIdentifier } from "@/syntax/infer/infer-identifier.ts"
+export { inferModifiers } from "@/syntax/infer/infer-modifiers.ts"
+export { inferStatusCode } from "@/syntax/infer/infer-status.ts"
+export { inferRoute } from "@/syntax/infer/infer-route.ts"
+export { inferType } from "@/syntax/infer/infer-type.ts"

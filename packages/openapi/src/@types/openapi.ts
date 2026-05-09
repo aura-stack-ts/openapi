@@ -110,8 +110,8 @@ export interface OperationObject {
  * External Documentation Object.
  */
 export interface ExternalDocumentationObject {
-    description?: string
     url: string
+    description?: string
 }
 
 /**
