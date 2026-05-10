@@ -6,7 +6,7 @@ import type { JSDocTagInfo } from "@/@types/compiler.ts"
 const getCommentTextFromJSDoc = (comment?: string | ts.NodeArray<ts.JSDocComment> | ts.JSDocText): string | undefined => {
     if (!comment) return undefined
     if (typeof comment === "string") return comment
-    if (Array.isArray(comment)) {
+    if ("map" in comment && typeof comment.map === "function") {
         return comment.map((c) => c.getText()).join(" ")
     }
     return (comment as ts.JSDocText).text
@@ -16,6 +16,9 @@ const getTagsFromJSDoc = (tags: ts.NodeArray<ts.JSDocTag> | undefined, sourceFil
     if (!tags) return []
     return tags.map((tag) => {
         const tagName = tag.tagName.text
+        if (!/^[a-zA-Z0-9_-]+$/.test(tagName)) {
+            return { tag: tagName, raw: "" }
+        }
         const fullText = tag.getText(sourceFile)
 
         let raw = fullText.replace(new RegExp(`^@${tagName}\\s*`), "")

@@ -47,7 +47,12 @@ export const getMetadata = async (targetPath: string): Promise<OpenAPISpec> => {
         const sourceFile = ts.createSourceFile(basename(filePath), content, ts.ScriptTarget.Latest, true)
 
         const pathsObject = getJSDocMetadata(sourceFile)
-        openAPISpec.paths = { ...openAPISpec.paths, ...pathsObject }
+        for (const [route, pathItem] of Object.entries(pathsObject)) {
+            openAPISpec.paths[route] = {
+                ...(openAPISpec.paths[route] ?? {}),
+                ...pathItem,
+            }
+        }
     }
     return openAPISpec
 }

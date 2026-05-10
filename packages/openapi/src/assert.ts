@@ -1,5 +1,5 @@
 export const isPlainKey = (key: any): boolean => {
-    const plainKeys = ["summary", "description", "operationId", "externalDocs"]
+    const plainKeys = ["summary", "description", "operationId"]
     return plainKeys.includes(key)
 }
 
@@ -9,6 +9,6 @@ export const isArrayKey = (key: any): boolean => {
 }
 
 export const isObjectKey = (key: any): boolean => {
-    const objectKeys = ["requestBody", "responses"]
+    const objectKeys = ["requestBody", "responses", "externalDocs"]
     return objectKeys.includes(key)
 }

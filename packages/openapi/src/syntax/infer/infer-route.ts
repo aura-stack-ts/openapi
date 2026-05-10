@@ -10,7 +10,7 @@ export const inferRoute = (raw: string): InferRoute => {
     if (match) {
         return {
             method: match[1].toUpperCase(),
-            route: match[2],
+            route: match[2].replace(/:(\w+)/g, "{$1}"),
             remaining: raw.slice(match[0].length).trim(),
         }
     }

@@ -3,7 +3,7 @@ import { getMetadata } from "@/metadata.ts"
 
 describe("Metadata Extraction", () => {
     test("extracts metadata from a directory of TypeScript files", async () => {
-        const metadata = await getMetadata("tests/fixtures/users.ts")
+        const metadata = await getMetadata("test/fixtures/users.ts")
         expect(metadata).toMatchObject({
             openapi: "3.0.0",
             info: {
@@ -22,14 +22,18 @@ describe("Metadata Extraction", () => {
                                 in: "path",
                                 description: "Organization ID",
                                 required: true,
-                                type: "string",
+                                schema: {
+                                    type: "string",
+                                },
                             },
                             {
                                 name: "sendEmail",
                                 in: "query",
                                 description: "Send welcome email",
                                 required: false,
-                                type: "boolean",
+                                schema: {
+                                    type: "boolean",
+                                },
                             },
                         ],
                     },
@@ -40,12 +44,14 @@ describe("Metadata Extraction", () => {
                                 in: "query",
                                 description: "The role of the new user",
                                 required: false,
-                                type: "string",
+                                schema: {
+                                    type: "string",
+                                },
                             },
                         ],
                     },
                 },
-                "/users/:userId": {
+                "/users/{userId}": {
                     get: {
                         parameters: [
                             {
@@ -53,14 +59,18 @@ describe("Metadata Extraction", () => {
                                 in: "path",
                                 description: "The ID of the user",
                                 required: true,
-                                type: "string",
+                                schema: {
+                                    type: "string",
+                                },
                             },
                             {
                                 name: "include",
                                 in: "query",
                                 description: "Additional fields to include",
                                 required: false,
-                                type: "string",
+                                schema: {
+                                    type: "string",
+                                },
                             },
                         ],
                     },
@@ -74,7 +84,9 @@ describe("Metadata Extraction", () => {
                                 in: "path",
                                 description: "The ID of the item",
                                 required: true,
-                                type: "number",
+                                schema: {
+                                    type: "number",
+                                },
                             },
                         ],
                     },

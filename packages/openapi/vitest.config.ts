@@ -1,15 +1,19 @@
 import path from "path"
+import { fileURLToPath } from "url"
 import { defineConfig } from "vitest/config"
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export default defineConfig({
     test: {
-        include: ["tests/**/*.test.ts"],
+        include: ["test/**/*.test.ts"],
         globals: true,
     },
     resolve: {
         alias: {
             "@": path.resolve(__dirname, "src"),
-            "@tests": path.resolve(__dirname, "tests"),
+            "@test": path.resolve(__dirname, "test"),
         },
     },
 })

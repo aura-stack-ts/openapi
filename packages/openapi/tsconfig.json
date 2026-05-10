@@ -3,9 +3,9 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"],
-      "@tests/*": ["./tests/*"]
+      "@test/*": ["./test/*"]
     }
   },
-  "include": ["src", "tests"],
+  "include": ["src", "test"],
   "exclude": ["node_modules", "dist"]
 }

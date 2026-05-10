@@ -5,7 +5,7 @@ export interface InferStatusCode {
 
 export const inferStatusCode = (raw: string): InferStatusCode => {
     raw = raw.trim()
-    const match = raw.match(/^(\d{3}|default)/i)
+    const match = raw.match(/^(\d{3}|default)(?=\s|$)/i)
     if (match) {
         return {
             statusCode: match[1],

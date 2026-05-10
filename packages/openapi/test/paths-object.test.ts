@@ -188,56 +188,72 @@ describe("Paths Object", () => {
                     in: "path",
                     name: "name",
                     required: true,
-                    type: "string",
+                    schema: {
+                        type: "string",
+                    },
                 },
                 {
                     description: "param description",
                     in: "query",
                     name: "age",
                     required: false,
-                    type: "number",
+                    schema: {
+                        type: "number",
+                    },
                 },
                 {
                     description: "param description",
                     in: "header",
                     name: "active",
                     required: false,
-                    type: "boolean",
+                    schema: {
+                        type: "boolean",
+                    },
                 },
                 {
                     description: "param description",
                     in: "cookie",
                     name: "session",
                     required: false,
-                    type: "string",
+                    schema: {
+                        type: "string",
+                    },
                 },
                 {
                     description: "param description",
                     in: "path",
                     name: "id",
                     required: true,
-                    type: "string",
+                    schema: {
+                        type: "string",
+                    },
                 },
                 {
                     description: "param description",
                     in: "query",
                     name: "age",
                     required: false,
-                    type: "string",
+                    schema: {
+                        type: "string",
+                    },
                 },
                 {
                     description: "param description",
                     in: "query",
                     name: "id",
                     required: true,
-                    type: "string",
+                    schema: {
+                        type: "string",
+                    },
                 },
                 {
                     description: "param description",
                     in: "query",
                     name: "id",
                     required: true,
-                    type: "string",
+                    schema: {
+                        type: "string",
+                    },
                 },
             ],
         })

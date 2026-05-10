@@ -128,10 +128,9 @@ tagRegistry.register("param", (tag) => {
                 in: idRes.location,
                 description: descRes.description,
                 required: modRes.required ?? (idRes.location === "path" ? true : false),
-                /**
-                 * Not standard OpenAPI.
-                 */
-                type: typeRes.type,
+                schema: {
+                    type: typeRes.type,
+                },
             },
         }
     }

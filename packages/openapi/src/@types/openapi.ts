@@ -309,8 +309,8 @@ export interface OAuthFlowsObject {
  * OAuth Flow Object.
  */
 export interface OAuthFlowObject {
-    authorizationUrl: string
-    tokenUrl: string
+    authorizationUrl?: string
+    tokenUrl?: string
     refreshUrl?: string
     scopes: Record<string, string>
 }
