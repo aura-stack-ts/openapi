@@ -12,8 +12,9 @@ describe("Metadata Extraction", () => {
             },
             paths: {
                 "/users": {
-                    description: "Create a new user",
+                    description: "Create a new user Creates a user and returns the created entity.",
                     get: {
+                        description: "Create a new user Creates a user and returns the created entity.",
                         tags: ["Users", "Admin"],
                         operationId: "createUser",
                         parameters: [
@@ -86,6 +87,7 @@ describe("Metadata Extraction", () => {
                         ],
                     },
                     post: {
+                        description: "Create a new user",
                         parameters: [
                             {
                                 name: "role",
@@ -135,6 +137,7 @@ describe("Metadata Extraction", () => {
                 "/users/{userId}": {
                     description: "Get a user by ID",
                     get: {
+                        description: "Get a user by ID",
                         parameters: [
                             {
                                 name: "userId",
@@ -182,6 +185,7 @@ describe("Metadata Extraction", () => {
                 "/items/{itemId}": {
                     description: "Update an item",
                     put: {
+                        description: "Update an item",
                         parameters: [
                             {
                                 name: "itemId",

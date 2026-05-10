@@ -1,8 +1,5 @@
 import ts from "typescript"
-import { getPathsObject } from "@/syntax/paths-object.ts"
-import type { PathsObject } from "@/@types/openapi.ts"
 import type { JSDocTagInfo } from "@/@types/compiler.ts"
-import type { HTTPMethod } from "./@types/types.ts"
 
 const getCommentTextFromJSDoc = (comment?: string | ts.NodeArray<ts.JSDocComment> | ts.JSDocText): string | undefined => {
     if (!comment) return undefined
@@ -38,58 +35,47 @@ const getTagsFromJSDoc = (tags: ts.NodeArray<ts.JSDocTag> | undefined, sourceFil
     })
 }
 
-export const getJSDocMetadata = (sourceFile: ts.SourceFile): PathsObject => {
-    const metadata: PathsObject = {}
+export const getFunctionMetadataFromJSDoc = (sourceFile: ts.SourceFile): JSDocTagInfo[][] => {
+    const allTags: JSDocTagInfo[][] = []
+    const seenJSDocs = new Set<ts.JSDoc>()
 
     const visit = (node: ts.Node) => {
-        let name: string | undefined
-        let isFunction = false
+        const docs = ts.getJSDocCommentsAndTags(node)
+        for (const doc of docs) {
+            if (ts.isJSDoc(doc) && !seenJSDocs.has(doc)) {
+                seenJSDocs.add(doc)
+                const openApiTag = doc.tags?.find((tag) => tag.tagName.text === "openapi")
+                if (openApiTag) {
+                    const tags = getTagsFromJSDoc(doc.tags, sourceFile)
 
-        if (ts.isFunctionDeclaration(node)) {
-            name = node.name ? node.name.getText(sourceFile) : "default"
-            isFunction = true
-        } else if (ts.isMethodDeclaration(node)) {
-            name = node.name.getText(sourceFile)
-            isFunction = true
-        } else if (ts.isVariableStatement(node)) {
-            const declaration = node.declarationList.declarations.find((decl) => {
-                const initializer = decl.initializer
-                return !!initializer && (ts.isArrowFunction(initializer) || ts.isFunctionExpression(initializer))
-            })
-            if (declaration) {
-                name = declaration.name.getText(sourceFile)
-                isFunction = true
-            }
-        }
-
-        if (isFunction && name) {
-            const docs = ts.getJSDocCommentsAndTags(node)
-            if (docs.length > 0) {
-                const doc = docs.find(ts.isJSDoc)
-                if (doc) {
-                    const openApiTag = doc.tags?.find((tag) => tag.tagName.text === "openapi")
-                    let description = getCommentTextFromJSDoc(doc.comment)
-                    if (!description && openApiTag) {
-                        description = getCommentTextFromJSDoc(openApiTag.comment)
-                    }
-                    const tags: JSDocTagInfo[] = []
-
-                    getTagsFromJSDoc(doc.tags, sourceFile).forEach((tagInfo) => tags.push(tagInfo))
-
-                    const pathObject = getPathsObject(tags)
-                    if (pathObject) {
-                        const { route, operation } = pathObject
-                        if (!metadata[route.route]) {
-                            metadata[route.route] = {}
+                    const mainComment = getCommentTextFromJSDoc(doc.comment)
+                    if (mainComment && !tags.some((t) => t.tag === "description")) {
+                        const processedComment = mainComment
+                            .split(/\r?\n/)
+                            .map((line) => line.replace(/^\s*\*\s?/, "").trim())
+                            .filter((line) => line.length > 0)
+                            .join(" ")
+                            .trim()
+                        tags.push({ tag: "description", raw: processedComment })
+                    } else if (!mainComment && openApiTag.comment) {
+                        const openApiComment = getCommentTextFromJSDoc(openApiTag.comment)
+                        if (openApiComment && !tags.some((t) => t.tag === "description")) {
+                            const processedOpenApiComment = openApiComment
+                                .split(/\r?\n/)
+                                .map((line) => line.replace(/^\s*\*\s?/, "").trim())
+                                .filter((line) => line.length > 0)
+                                .join(" ")
+                                .trim()
+                            tags.push({ tag: "description", raw: processedOpenApiComment })
                         }
-                        metadata[route.route]["description"] = description
-                        metadata[route.route][route.method as HTTPMethod] = operation
                     }
+
+                    allTags.push(tags)
                 }
             }
         }
         ts.forEachChild(node, visit)
     }
     visit(sourceFile)
-    return metadata
+    return allTags
 }
