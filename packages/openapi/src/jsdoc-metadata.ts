@@ -2,6 +2,7 @@ import ts from "typescript"
 import { getPathsObject } from "@/syntax/paths-object.ts"
 import type { PathsObject } from "@/@types/openapi.ts"
 import type { JSDocTagInfo } from "@/@types/compiler.ts"
+import type { HTTPMethod } from "./@types/types.ts"
 
 const getCommentTextFromJSDoc = (comment?: string | ts.NodeArray<ts.JSDocComment> | ts.JSDocText): string | undefined => {
     if (!comment) return undefined
@@ -51,12 +52,13 @@ export const getJSDocMetadata = (sourceFile: ts.SourceFile): PathsObject => {
             name = node.name.getText(sourceFile)
             isFunction = true
         } else if (ts.isVariableStatement(node)) {
-            const declaration = node.declarationList.declarations[0]
-            if (declaration && declaration.initializer) {
-                if (ts.isArrowFunction(declaration.initializer) || ts.isFunctionExpression(declaration.initializer)) {
-                    name = declaration.name.getText(sourceFile)
-                    isFunction = true
-                }
+            const declaration = node.declarationList.declarations.find((decl) => {
+                const initializer = decl.initializer
+                return !!initializer && (ts.isArrowFunction(initializer) || ts.isFunctionExpression(initializer))
+            })
+            if (declaration) {
+                name = declaration.name.getText(sourceFile)
+                isFunction = true
             }
         }
 
@@ -79,8 +81,7 @@ export const getJSDocMetadata = (sourceFile: ts.SourceFile): PathsObject => {
                             metadata[route.route] = {}
                         }
                         metadata[route.route]["description"] = description
-                        // @ts-ignore
-                        metadata[route.route][route.method as string] = operation
+                        metadata[route.route][route.method as HTTPMethod] = operation
                     }
                 }
             }

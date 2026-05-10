@@ -15,7 +15,7 @@ export const getPathsObject = (tags: JSDocTagInfo[]): PathObjectDefinition | und
     const isOpenApi = tags.some((t) => t.tag === "openapi")
     if (!isOpenApi) return undefined
     const route = {} as PathObjectDefinition["route"]
-    const operation = {} as OperationObject
+    const operation: Record<string, any> = {}
     for (const tag of tags) {
         if (tag.tag === "openapi") continue
         const { key, value } = tagRegistry.process(tag)
@@ -25,26 +25,21 @@ export const getPathsObject = (tags: JSDocTagInfo[]): PathObjectDefinition | und
             route["method"] = value.method?.toLowerCase()
             route["route"] = value.route
         } else if (isPlainKey(key)) {
-            // @ts-ignore
             operation[key] = value
         } else if (isArrayKey(key)) {
             if (!(key in operation)) {
-                // @ts-ignore
                 operation[key] = []
             }
-            // @ts-ignore
             operation[key].push(value)
         } else if (isObjectKey(key)) {
             if (!(key in operation)) {
-                // @ts-ignore
                 operation[key] = {}
             }
-            // @ts-ignore
             Object.assign(operation[key], value)
         }
     }
     return {
         route,
-        operation,
+        operation: operation as OperationObject,
     }
 }

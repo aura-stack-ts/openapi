@@ -21,7 +21,7 @@ describe("Paths Object", () => {
                 raw: "createUser",
             },
         ])
-        expect(pathsObject?.operation).toMatchObject({
+        expect(pathsObject?.operation).toEqual({
             summary: "Create a new user",
             description: "Creates a user and returns the created entity.",
             operationId: "createUser",
@@ -65,7 +65,7 @@ describe("Paths Object", () => {
                 raw: "Admin",
             },
         ])
-        expect(pathsObject?.operation).toMatchObject({
+        expect(pathsObject?.operation).toEqual({
             tags: ["Users", "Admin"],
         })
     })
@@ -181,7 +181,7 @@ describe("Paths Object", () => {
             },
         ])
 
-        expect(pathsObject?.operation).toMatchObject({
+        expect(pathsObject?.operation).toEqual({
             parameters: [
                 {
                     description: "param description",
