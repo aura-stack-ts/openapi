@@ -3,17 +3,17 @@ export interface InferType {
     remaining: string
 }
 
-export const inferType = (raw: string): InferType => {
+export const inferType = (raw: string, defaultType: string = "string"): InferType => {
     raw = raw.trim()
-    const match = raw.match(/^\{([^}]+)\}/)
+    const match = raw.match(/\{([^}]+)\}/)
     if (match) {
         return {
             type: match[1],
-            remaining: raw.slice(match[0].length).trim(),
+            remaining: (raw.slice(0, match.index) + raw.slice(match.index! + match[0].length)).trim(),
         }
     }
     return {
-        type: "string",
+        type: defaultType,
         remaining: raw,
     }
 }

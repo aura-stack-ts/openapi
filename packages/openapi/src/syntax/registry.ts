@@ -1,5 +1,13 @@
 import type { JSDocTagInfo } from "@/@types/compiler.ts"
-import { inferType, inferIdentifier, inferModifiers, inferDescription, inferRoute } from "@/syntax/infer/index.ts"
+import {
+    inferType,
+    inferIdentifier,
+    inferModifiers,
+    inferDescription,
+    inferRoute,
+    inferStatusCode,
+} from "@/syntax/infer/index.ts"
+import { inferContentType } from "./infer/infer-content-type.ts"
 
 export type TagProcessor = (tag: JSDocTagInfo) => { key: string; value: any }
 
@@ -137,5 +145,137 @@ tagRegistry.register("param", (tag) => {
     return {
         key: "parameters",
         value: "unknown",
+    }
+})
+
+tagRegistry.register("body", (tag) => {
+    let raw = tag.raw
+
+    const type = inferType(raw, "object")
+    raw = type.remaining
+
+    const contentType = inferContentType(raw)
+    raw = contentType.remaining
+
+    const modifier = inferModifiers(raw)
+    raw = modifier.remaining
+
+    const desc = inferDescription(raw)
+
+    const mediaType = contentType.contentType ?? "application/json"
+
+    const value: Record<string, any> = {
+        required: modifier.required ?? true,
+        content: {
+            [mediaType]: {
+                schema: {
+                    type: type.type,
+                },
+            },
+        },
+    }
+
+    if (desc.description) {
+        value.description = desc.description
+    }
+
+    return {
+        key: "requestBody",
+        value,
+    }
+})
+
+tagRegistry.register("response", (tag) => {
+    let raw = tag.raw
+
+    const status = inferStatusCode(raw)
+    raw = status.remaining
+
+    const contentType = inferContentType(raw)
+    raw = contentType.remaining
+
+    const type = inferType(raw)
+    raw = type.remaining
+
+    const desc = inferDescription(raw)
+
+    const statusCode = status.statusCode
+
+    if (!statusCode) {
+        return { key: "responses", value: "unknown" }
+    }
+
+    const value: Record<string, any> = {
+        [statusCode]: {},
+    }
+
+    if (desc.description) {
+        value[statusCode].description = desc.description
+    }
+
+    if (contentType.contentType) {
+        let responseType = type.type
+        if (!responseType || responseType === "string") {
+            if (contentType.contentType === "application/json") {
+                responseType = "object"
+            }
+        }
+
+        value[statusCode].content = {
+            [contentType.contentType]: {
+                schema: {
+                    type: responseType,
+                },
+            },
+        }
+    }
+
+    return {
+        key: "responses",
+        value,
+    }
+})
+
+tagRegistry.register("security", (tag) => {
+    const raw = tag.raw.trim()
+    if (!raw) return { key: "security", value: "unknown" }
+
+    const parts = raw.split(/\s+/)
+    const scheme = parts[0]
+    const scopes = parts.slice(1)
+
+    return {
+        key: "security",
+        value: {
+            [scheme]: scopes,
+        },
+    }
+})
+
+tagRegistry.register("server", (tag) => {
+    const raw = tag.raw.trim()
+    if (!raw) return { key: "servers", value: "unknown" }
+
+    const match = raw.match(/^([^\s]+)(?:\s*-\s*(.*))?$/)
+    if (!match) return { key: "servers", value: { url: raw } }
+
+    const url = match[1]
+    const description = match[2]
+
+    const value: Record<string, any> = { url }
+    if (description) {
+        value.description = description
+    }
+
+    return {
+        key: "servers",
+        value,
+    }
+})
+
+tagRegistry.register("deprecated", (tag) => {
+    return {
+        key: "deprecated",
+        value: true,
     }
 })

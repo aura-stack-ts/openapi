@@ -67,9 +67,11 @@ export const getJSDocMetadata = (sourceFile: ts.SourceFile): PathsObject => {
             if (docs.length > 0) {
                 const doc = docs.find(ts.isJSDoc)
                 if (doc) {
-                    const hasOpenAPITag = doc.tags?.some((tag) => tag.tagName.text === "openapi")
-                    if (!hasOpenAPITag) return
-                    const description = getCommentTextFromJSDoc(doc.comment)
+                    const openApiTag = doc.tags?.find((tag) => tag.tagName.text === "openapi")
+                    let description = getCommentTextFromJSDoc(doc.comment)
+                    if (!description && openApiTag) {
+                        description = getCommentTextFromJSDoc(openApiTag.comment)
+                    }
                     const tags: JSDocTagInfo[] = []
 
                     getTagsFromJSDoc(doc.tags, sourceFile).forEach((tagInfo) => tags.push(tagInfo))

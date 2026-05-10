@@ -4,7 +4,7 @@ import { getMetadata } from "@/metadata.ts"
 describe("Metadata Extraction", () => {
     test("extracts metadata from a directory of TypeScript files", async () => {
         const metadata = await getMetadata("test/fixtures/users.ts")
-        expect(metadata).toMatchObject({
+        expect(metadata).toEqual({
             openapi: "3.0.0",
             info: {
                 title: "API Documentation",
@@ -36,6 +36,54 @@ describe("Metadata Extraction", () => {
                                 },
                             },
                         ],
+                        requestBody: {
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "CreateUserInput",
+                                    },
+                                },
+                            },
+                            description: "User payload",
+                            required: true,
+                        },
+                        responses: {
+                            "201": {
+                                description: "User created",
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            type: "User",
+                                        },
+                                    },
+                                },
+                            },
+                            "400": {
+                                description: "Invalid payload",
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            type: "ValidationError",
+                                        },
+                                    },
+                                },
+                            },
+                            "409": {
+                                description: "Email already exists",
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            type: "ConflictError",
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        security: [
+                            {
+                                bearerAuth: [],
+                            },
+                        ],
                     },
                     post: {
                         parameters: [
@@ -49,9 +97,43 @@ describe("Metadata Extraction", () => {
                                 },
                             },
                         ],
+                        requestBody: {
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "CreateUserInput",
+                                    },
+                                },
+                            },
+                            description: "User payload",
+                            required: true,
+                        },
+                        responses: {
+                            "201": {
+                                description: "The created user object",
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            type: "User",
+                                        },
+                                    },
+                                },
+                            },
+                            "400": {
+                                description: "Invalid input",
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            type: "ValidationError",
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
                 "/users/{userId}": {
+                    description: "Get a user by ID",
                     get: {
                         parameters: [
                             {
@@ -73,6 +155,28 @@ describe("Metadata Extraction", () => {
                                 },
                             },
                         ],
+                        responses: {
+                            "200": {
+                                description: "The user object",
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            type: "User",
+                                        },
+                                    },
+                                },
+                            },
+                            "404": {
+                                description: "User not found",
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            type: "NotFoundError",
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
                 "/items/{itemId}": {
@@ -89,6 +193,29 @@ describe("Metadata Extraction", () => {
                                 },
                             },
                         ],
+                        requestBody: {
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "UpdateItemInput",
+                                    },
+                                },
+                            },
+                            description: "Item payload",
+                            required: true,
+                        },
+                        responses: {
+                            "200": {
+                                description: "Updated item",
+                                content: {
+                                    "application/json": {
+                                        schema: {
+                                            type: "Item",
+                                        },
+                                    },
+                                },
+                            },
+                        },
                     },
                 },
             },
