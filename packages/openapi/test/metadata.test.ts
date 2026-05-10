@@ -36,6 +36,17 @@ describe("Metadata Extraction", () => {
                                 },
                             },
                         ],
+                        requestBody: {
+                            content: {
+                                "application/json": {
+                                    schema: {
+                                        type: "CreateUserInput",
+                                    },
+                                },
+                            },
+                            description: "User payload",
+                            required: true,
+                        },
                         responses: {
                             "201": {
                                 description: "User created",

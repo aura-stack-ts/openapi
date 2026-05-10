@@ -5,7 +5,6 @@ export interface InferType {
 
 export const inferType = (raw: string, defaultType: string = "string"): InferType => {
     raw = raw.trim()
-    // {User} content ...
     const match = raw.match(/\{([^}]+)\}/)
     if (match) {
         return {

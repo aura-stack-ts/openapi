@@ -162,14 +162,12 @@ tagRegistry.register("body", (tag) => {
 
     const desc = inferDescription(raw)
 
-    if (!contentType.contentType) {
-        return { key: "requestBody", value: "unknown" }
-    }
+    const mediaType = contentType.contentType ?? "application/json"
 
     const value: Record<string, any> = {
         required: modifier.required ?? true,
         content: {
-            [contentType.contentType]: {
+            [mediaType]: {
                 schema: {
                     type: type.type,
                 },
@@ -200,9 +198,6 @@ tagRegistry.register("response", (tag) => {
     raw = type.remaining
 
     const desc = inferDescription(raw)
-
-    const identifier = inferIdentifier(raw)
-    raw = identifier.remaining
 
     const statusCode = status.statusCode
 
