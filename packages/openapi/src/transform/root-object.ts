@@ -56,7 +56,7 @@ export const getRootObjectMetadata = (sourceFile: ts.SourceFile): Partial<OpenAP
         if (root) {
             found = true
             if (root.info) {
-                combinedRoot.info = { ...(combinedRoot.info || {}), ...root.info } as any
+                combinedRoot.info = { ...(combinedRoot.info || {}), ...root.info }
             }
             if (root.tags) {
                 const existingTags = combinedRoot.tags || []

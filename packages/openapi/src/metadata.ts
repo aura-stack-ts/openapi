@@ -53,10 +53,12 @@ export const getMetadata = async (targetPath: string): Promise<OpenAPISpec> => {
             const root = getRootObject(tags)
             if (root) {
                 if (root.info) {
-                    openAPISpec.info = { ...openAPISpec.info, ...root.info } as any
+                    openAPISpec.info = { ...openAPISpec.info, ...root.info }
                 }
                 if (root.tags) {
-                    openAPISpec.tags = [...(openAPISpec.tags || []), ...root.tags]
+                    const existingTags = openAPISpec.tags || []
+                    const newTags = root.tags.filter((newTag) => !existingTags.some((existing) => existing.name === newTag.name))
+                    openAPISpec.tags = [...existingTags, ...newTags]
                 }
                 if (root.security) {
                     openAPISpec.security = [...(openAPISpec.security || []), ...root.security]
@@ -65,7 +67,9 @@ export const getMetadata = async (targetPath: string): Promise<OpenAPISpec> => {
                     openAPISpec.servers = [...(openAPISpec.servers || []), ...root.servers]
                 }
                 if (root.externalDocs) {
-                    openAPISpec.externalDocs = root.externalDocs
+                    if (!openAPISpec.externalDocs) {
+                        openAPISpec.externalDocs = root.externalDocs
+                    }
                 }
             }
 
