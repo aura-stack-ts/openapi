@@ -46,8 +46,8 @@ export const getPathsObjectMetadata = (sourceFile: ts.SourceFile): PathsObject =
             const { route, operation } = pathObject
             if (!metadata[route.route]) {
                 metadata[route.route] = {}
+                metadata[route.route]["description"] = "unknown"
             }
-            metadata[route.route]["description"] = "unknown"
             metadata[route.route][route.method as HTTPMethod] = operation
         }
     }

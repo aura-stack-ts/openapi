@@ -52,7 +52,7 @@ export const getMetadata = async (targetPath: string): Promise<OpenAPISpec> => {
         for (const tags of allTagsPerBlock) {
             const info = getInfoObject(tags)
             if (info) {
-                openAPISpec.info = { ...openAPISpec.info, ...info } as any
+                openAPISpec.info = { ...openAPISpec.info, ...info }
             }
 
             const pathObject = getPathsObject(tags)
