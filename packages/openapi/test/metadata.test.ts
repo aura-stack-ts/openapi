@@ -8,12 +8,13 @@ describe("Metadata Extraction", () => {
             openapi: "3.0.0",
             info: {
                 title: "API Documentation",
-                version: "1.0.0",
+                version: "0.0.0",
             },
             paths: {
                 "/users": {
-                    description: "Create a new user",
+                    description: "Create a new user Creates a user and returns the created entity.",
                     get: {
+                        description: "Create a new user Creates a user and returns the created entity.",
                         tags: ["Users", "Admin"],
                         operationId: "createUser",
                         parameters: [
@@ -86,6 +87,7 @@ describe("Metadata Extraction", () => {
                         ],
                     },
                     post: {
+                        description: "Create a new user",
                         parameters: [
                             {
                                 name: "role",
@@ -135,6 +137,7 @@ describe("Metadata Extraction", () => {
                 "/users/{userId}": {
                     description: "Get a user by ID",
                     get: {
+                        description: "Get a user by ID",
                         parameters: [
                             {
                                 name: "userId",
@@ -182,6 +185,7 @@ describe("Metadata Extraction", () => {
                 "/items/{itemId}": {
                     description: "Update an item",
                     put: {
+                        description: "Update an item",
                         parameters: [
                             {
                                 name: "itemId",
@@ -218,6 +222,25 @@ describe("Metadata Extraction", () => {
                         },
                     },
                 },
+            },
+        })
+    })
+
+    test("get info object metadata", async () => {
+        const metadata = await getMetadata("test/fixtures/info.ts")
+        expect(metadata.info).toEqual({
+            title: "OpenAPI Specification Example",
+            version: "0.1.0",
+            description: "This is an example of an OpenAPI specification document.",
+            termsOfService: "https://example.com/terms/",
+            contact: {
+                name: "Aura Stack",
+                email: "aurastackjs@gmail.com",
+                url: "https://github.com/aura-stack-ts/",
+            },
+            license: {
+                name: "MIT",
+                url: "https://github.com/aura-stack-ts/.github/blob/master/LICENSE",
             },
         })
     })

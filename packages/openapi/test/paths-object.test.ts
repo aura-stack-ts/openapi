@@ -1,4 +1,4 @@
-import { getPathsObject } from "@/syntax/paths-object.ts"
+import { getPathsObject } from "@/transform/paths-object.ts"
 import { describe, expect, test } from "vitest"
 
 describe("Paths Object", () => {

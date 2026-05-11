@@ -279,3 +279,64 @@ tagRegistry.register("deprecated", (tag) => {
         value: true,
     }
 })
+
+tagRegistry.register("version", (tag) => {
+    return {
+        key: "version",
+        value: tag.raw.trim(),
+    }
+})
+
+tagRegistry.register("title", (tag) => {
+    return {
+        key: "title",
+        value: tag.raw.trim(),
+    }
+})
+
+tagRegistry.register("termsOfService", (tag) => {
+    return {
+        key: "termsOfService",
+        value: tag.raw.trim(),
+    }
+})
+
+tagRegistry.register("contact", (tag) => {
+    const raw = tag.raw.trim()
+    const emailMatch = raw.match(/<([^>]+)>/)
+    const email = emailMatch ? emailMatch[1] : undefined
+    let remaining = emailMatch
+        ? (raw.slice(0, emailMatch.index) + raw.slice(emailMatch.index! + emailMatch[0].length)).trim()
+        : raw
+
+    const urlMatch = remaining.match(/(https?:\/\/[^\s]+)/)
+    const url = urlMatch ? urlMatch[1] : undefined
+    const name = urlMatch
+        ? (remaining.slice(0, urlMatch.index) + remaining.slice(urlMatch.index! + urlMatch[0].length)).trim()
+        : remaining
+
+    const value: Record<string, any> = {}
+    if (name) value.name = name
+    if (url) value.url = url
+    if (email) value.email = email
+
+    return {
+        key: "contact",
+        value,
+    }
+})
+
+tagRegistry.register("license", (tag) => {
+    const raw = tag.raw.trim()
+    const urlMatch = raw.match(/(https?:\/\/[^\s]+)/)
+    const url = urlMatch ? urlMatch[1] : undefined
+    const name = urlMatch ? (raw.slice(0, urlMatch.index) + raw.slice(urlMatch.index! + urlMatch[0].length)).trim() : raw
+
+    const value: Record<string, any> = { name }
+    if (url) value.url = url
+
+    return {
+        key: "license",
+        value,
+    }
+})

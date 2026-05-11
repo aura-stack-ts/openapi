@@ -1,15 +1,8 @@
+import ts from "typescript"
 import { tagRegistry } from "@/syntax/registry.ts"
-import { isArrayKey, isObjectKey, isPlainKey } from "@/assert.ts"
-import type { JSDocTagInfo } from "@/@types/compiler.ts"
-import type { OperationObject } from "@/@types/openapi.ts"
-
-export interface PathObjectDefinition {
-    route: {
-        route: string
-        method: string
-    }
-    operation: OperationObject
-}
+import { getFunctionMetadataFromJSDoc } from "@/jsdoc-metadata.ts"
+import { isArrayKey, isObjectKey, isPlainKey } from "@/shared/assert.ts"
+import type { PathsObject, OperationObject, HTTPMethod, JSDocTagInfo, PathObjectDefinition } from "@/@types/index.ts"
 
 export const getPathsObject = (tags: JSDocTagInfo[]): PathObjectDefinition | undefined => {
     const isOpenApi = tags.some((t) => t.tag === "openapi")
@@ -42,4 +35,21 @@ export const getPathsObject = (tags: JSDocTagInfo[]): PathObjectDefinition | und
         route,
         operation: operation as OperationObject,
     }
+}
+
+export const getPathsObjectMetadata = (sourceFile: ts.SourceFile): PathsObject => {
+    const metadata: PathsObject = {}
+    const tagsPerFunction = getFunctionMetadataFromJSDoc(sourceFile)
+    for (const tags of tagsPerFunction) {
+        const pathObject = getPathsObject(tags)
+        if (pathObject) {
+            const { route, operation } = pathObject
+            if (!metadata[route.route]) {
+                metadata[route.route] = {}
+                metadata[route.route]["description"] = "unknown"
+            }
+            metadata[route.route][route.method as HTTPMethod] = operation
+        }
+    }
+    return metadata
 }
