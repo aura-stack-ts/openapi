@@ -69,11 +69,22 @@ tagRegistry.register("route", (tag) => {
 })
 
 tagRegistry.register("tag", (tag) => {
-    const value = tag.raw.trim()
+    const raw = tag.raw.trim()
+    if (!raw) return { key: "tags", value: "unknown" }
+    const match = raw.match(/^([^\s]+)(?:\s+(.*))?$/)
+    if (!match) return { key: "tags", value: { name: raw } }
+
+    const name = match[1]
+    const description = match[2]
+
+    const value: Record<string, any> = { name }
+    if (description) {
+        value.description = description
+    }
 
     return {
         key: "tags",
-        value: value || "unknown",
+        value,
     }
 })
 
@@ -273,7 +284,7 @@ tagRegistry.register("server", (tag) => {
     }
 })
 
-tagRegistry.register("deprecated", (tag) => {
+tagRegistry.register("deprecated", (_) => {
     return {
         key: "deprecated",
         value: true,

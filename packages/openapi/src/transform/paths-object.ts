@@ -23,7 +23,11 @@ export const getPathsObject = (tags: JSDocTagInfo[]): PathObjectDefinition | und
             if (!(key in operation)) {
                 operation[key] = []
             }
-            operation[key].push(value)
+            if (key === "tags" && typeof value === "object" && value !== null && "name" in value) {
+                operation[key].push(value.name)
+            } else {
+                operation[key].push(value)
+            }
         } else if (isObjectKey(key)) {
             if (!(key in operation)) {
                 operation[key] = {}

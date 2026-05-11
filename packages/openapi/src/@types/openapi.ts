@@ -22,11 +22,11 @@ export interface OpenAPISpec {
  */
 export interface InfoObject {
     title: string
+    version: string
     description?: string
     termsOfService?: string
     contact?: ContactObject
     license?: LicenseObject
-    version: string
 }
 
 /**
@@ -340,8 +340,6 @@ export type CallbackObject = Record<string, PathItemObject>
 export interface ReferenceObject {
     $ref: string
 }
-
-// #region OpenAPI Generation Metadata
 
 /**
  * Metadata for OpenAPI generation from endpoints.

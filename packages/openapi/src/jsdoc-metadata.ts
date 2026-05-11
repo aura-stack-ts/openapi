@@ -35,7 +35,7 @@ const getTagsFromJSDoc = (tags: ts.NodeArray<ts.JSDocTag> | undefined, sourceFil
     })
 }
 
-export const getFunctionMetadataFromJSDoc = (sourceFile: ts.SourceFile): JSDocTagInfo[][] => {
+export const extractAllOpenApiTags = (sourceFile: ts.SourceFile): JSDocTagInfo[][] => {
     const allTags: JSDocTagInfo[][] = []
     const seenJSDocs = new Set<ts.JSDoc>()
 
@@ -79,3 +79,5 @@ export const getFunctionMetadataFromJSDoc = (sourceFile: ts.SourceFile): JSDocTa
     visit(sourceFile)
     return allTags
 }
+
+export const getFunctionMetadataFromJSDoc = extractAllOpenApiTags

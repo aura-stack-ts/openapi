@@ -17,3 +17,14 @@ export const isInfoKey = (key: any): boolean => {
     const infoKeys = ["version", "title", "description", "termsOfService", "contact", "license"]
     return infoKeys.includes(key)
 }
+
+export const isGlobalKey = (key: any): boolean => {
+    const globalKeys = [
+        "security",
+        "tags",
+        "externalDocs",
+        "servers",
+        ...["version", "title", "description", "termsOfService", "contact", "license"],
+    ]
+    return globalKeys.includes(key)
+}
