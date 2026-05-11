@@ -8,7 +8,7 @@ describe("Metadata Extraction", () => {
             openapi: "3.0.0",
             info: {
                 title: "API Documentation",
-                version: "0.0.0",
+                version: "1.0.0",
             },
             paths: {
                 "/users": {
@@ -226,8 +226,8 @@ describe("Metadata Extraction", () => {
         })
     })
 
-    test("get info object metadata", async () => {
-        const metadata = await getMetadata("test/fixtures/info.ts")
+    test("get root object metadata", async () => {
+        const metadata = await getMetadata("test/fixtures/root-info.ts")
         expect(metadata.info).toEqual({
             title: "OpenAPI Specification Example",
             version: "0.1.0",
@@ -242,6 +242,12 @@ describe("Metadata Extraction", () => {
                 name: "MIT",
                 url: "https://github.com/aura-stack-ts/.github/blob/master/LICENSE",
             },
+        })
+        expect(metadata.tags).toEqual([{ name: "Users", description: "Description for users tag" }, { name: "Admin" }])
+        expect(metadata.security).toEqual([{ bearerAuth: ["scope1", "scope2"] }, { apiKeyAuth: [] }])
+        expect(metadata.externalDocs).toEqual({
+            url: "https://example.com/docs",
+            description: "External Documentation Description",
         })
     })
 })

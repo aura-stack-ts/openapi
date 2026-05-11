@@ -3,7 +3,7 @@ import { resolve, extname, basename } from "node:path"
 import { readdir, stat, readFile } from "node:fs/promises"
 import { getFunctionMetadataFromJSDoc } from "@/jsdoc-metadata.ts"
 import { getPathsObject } from "@/transform/paths-object.ts"
-import { getInfoObject } from "@/transform/info-object.ts"
+import { getRootObject } from "@/transform/root-object.ts"
 import type { OpenAPISpec, HTTPMethod } from "@/@types/index.ts"
 
 export const getFiles = async (dir: string): Promise<string[]> => {
@@ -22,7 +22,7 @@ export const getMetadata = async (targetPath: string): Promise<OpenAPISpec> => {
         openapi: "3.0.0",
         info: {
             title: "API Documentation",
-            version: "0.0.0",
+            version: "1.0.0",
         },
         paths: {},
     }
@@ -50,9 +50,27 @@ export const getMetadata = async (targetPath: string): Promise<OpenAPISpec> => {
 
         const allTagsPerBlock = getFunctionMetadataFromJSDoc(sourceFile)
         for (const tags of allTagsPerBlock) {
-            const info = getInfoObject(tags)
-            if (info) {
-                openAPISpec.info = { ...openAPISpec.info, ...info }
+            const root = getRootObject(tags)
+            if (root) {
+                if (root.info) {
+                    openAPISpec.info = { ...openAPISpec.info, ...root.info }
+                }
+                if (root.tags) {
+                    const existingTags = openAPISpec.tags || []
+                    const newTags = root.tags.filter((newTag) => !existingTags.some((existing) => existing.name === newTag.name))
+                    openAPISpec.tags = [...existingTags, ...newTags]
+                }
+                if (root.security) {
+                    openAPISpec.security = [...(openAPISpec.security || []), ...root.security]
+                }
+                if (root.servers) {
+                    openAPISpec.servers = [...(openAPISpec.servers || []), ...root.servers]
+                }
+                if (root.externalDocs) {
+                    if (!openAPISpec.externalDocs) {
+                        openAPISpec.externalDocs = root.externalDocs
+                    }
+                }
             }
 
             const pathObject = getPathsObject(tags)
