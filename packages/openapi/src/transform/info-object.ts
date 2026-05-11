@@ -9,8 +9,7 @@ import type { InfoObject } from "@/@types/openapi.ts"
  * Extracts InfoObject metadata from JSDoc tags.
  */
 export const getInfoObject = (tags: JSDocTagInfo[]): Partial<InfoObject> | undefined => {
-    // Only consider it an info block if it has NO @route
-    const hasRoute = tags.some((t) => t.tag === "route" || t.tag === "endpoint")
+    const hasRoute = tags.some((t) => t.tag === "route")
     if (hasRoute) return undefined
 
     const info: Record<string, any> = {}
@@ -25,7 +24,6 @@ export const getInfoObject = (tags: JSDocTagInfo[]): Partial<InfoObject> | undef
             found = true
         }
     }
-
     return found ? (info as Partial<InfoObject>) : undefined
 }
 
@@ -44,6 +42,5 @@ export const getInfoObjectMetadata = (sourceFile: ts.SourceFile): Partial<InfoOb
             found = true
         }
     }
-
     return found ? combinedInfo : undefined
 }

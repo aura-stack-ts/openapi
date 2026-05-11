@@ -1,7 +1,7 @@
 /**
  * @openapi
  *
- * @version 3.0.0
+ * @version 0.1.0
  * @title OpenAPI Specification Example
  * @description This is an example of an OpenAPI specification document.
  * @termsOfService https://example.com/terms/

@@ -22,7 +22,7 @@ export const getMetadata = async (targetPath: string): Promise<OpenAPISpec> => {
         openapi: "3.0.0",
         info: {
             title: "API Documentation",
-            version: "1.0.0",
+            version: "0.0.0",
         },
         paths: {},
     }

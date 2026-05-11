@@ -225,4 +225,23 @@ describe("Metadata Extraction", () => {
             },
         })
     })
+
+    test("get info object metadata", async () => {
+        const metadata = await getMetadata("test/fixtures/info.ts")
+        expect(metadata.info).toEqual({
+            title: "OpenAPI Specification Example",
+            version: "0.1.0",
+            description: "This is an example of an OpenAPI specification document.",
+            termsOfService: "https://example.com/terms/",
+            contact: {
+                name: "Aura Stack",
+                email: "aurastackjs@gmail.com",
+                url: "https://github.com/aura-stack-ts/",
+            },
+            license: {
+                name: "MIT",
+                url: "https://github.com/aura-stack-ts/.github/blob/master/LICENSE",
+            },
+        })
+    })
 })
